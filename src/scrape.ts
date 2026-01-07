@@ -1,9 +1,7 @@
 import { chromium } from "playwright";
 import { Job } from "./types";
 
-export async function scrapeJobs(
-  careersUrl: string
-): Promise<Job[]> {
+export async function scrapeJobs(careersUrl: string): Promise<Job[]> {
   const browser = await chromium.launch({ headless: true });
   const page = await browser.newPage();
 
@@ -13,10 +11,10 @@ export async function scrapeJobs(
   const jobs = await page.evaluate(() => {
     const links = Array.from(document.querySelectorAll("a"));
     return links
-      .filter(a => a.textContent && a.href.includes("/positions/"))
-      .map(a => ({
+      .filter((a) => a.textContent && a.href.includes("/positions/"))
+      .map((a) => ({
         title: a.textContent!.trim(),
-        url: a.href
+        url: a.href,
       }));
   });
 
