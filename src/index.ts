@@ -11,12 +11,17 @@ async function run() {
   for (const company of companies) {
     console.log(`🔍 Checking ${company.name}`);
 
-    const jobs = await scrapeJobs(company);
+    try {
+      const jobs = await scrapeJobs(company);
 
-    for (const job of jobs) {
-      if (isNewJob(job)) {
-        newJobs.push(job);
+      for (const job of jobs) {
+        if (isNewJob(job)) {
+          newJobs.push(job);
+        }
       }
+    } catch (error) {
+      console.error(`⚠️  Failed to scrape ${company.name}:`, error instanceof Error ? error.message : error);
+      // Continue with next company
     }
   }
 

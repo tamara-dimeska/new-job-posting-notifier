@@ -1,3 +1,5 @@
 node_modules/
 jobs.db
 private-config.json
+run.log
+run.sh
