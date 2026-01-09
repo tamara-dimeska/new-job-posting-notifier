@@ -14,15 +14,18 @@ export async function scrapeJobs(company: CompanyConfig): Promise<Job[]> {
       return elements
         .map((el: HTMLAnchorElement | HTMLDivElement) => ({
           title: el.textContent?.trim() || "",
-          url: el instanceof HTMLAnchorElement ? el.href : el.textContent?.trim() || "",
-          company: companyName
+          url:
+            el instanceof HTMLAnchorElement
+              ? el.href
+              : el.textContent?.trim() || "",
+          company: companyName,
         }))
-        .filter(j => j.title.length > 3 && j.url.includes(jobLinkSelector));
+        .filter((j) => j.title.length > 3 && j.url.includes(jobLinkSelector));
     },
     {
       companyName: company.name,
       jobSelectorType: company.jobSelectorType,
-      jobLinkSelector: company.jobLinkSelector
+      jobLinkSelector: company.jobLinkSelector,
     }
   );
 
