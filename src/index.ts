@@ -20,7 +20,10 @@ async function run() {
         }
       }
     } catch (error) {
-      console.error(`⚠️  Failed to scrape ${company.name}:`, error instanceof Error ? error.message : error);
+      console.error(
+        `⚠️  Failed to scrape ${company.name}:`,
+        error instanceof Error ? error.message : error
+      );
       // Continue with next company
     }
   }
