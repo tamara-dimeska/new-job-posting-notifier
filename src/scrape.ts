@@ -1,22 +1,30 @@
 import { chromium } from "playwright";
-import { Job } from "./types";
+import { CompanyConfig, Job } from "./types";
 
-export async function scrapeJobs(careersUrl: string): Promise<Job[]> {
+export async function scrapeJobs(company: CompanyConfig): Promise<Job[]> {
   const browser = await chromium.launch({ headless: true });
   const page = await browser.newPage();
 
-  await page.goto(careersUrl, { waitUntil: "networkidle" });
+  await page.goto(company.careersUrl, { waitUntil: "networkidle" });
 
-  // ⚠️ This selector is company-specific, needs to be updated once we have a better pattern
-  const jobs = await page.evaluate(() => {
-    const links = Array.from(document.querySelectorAll("a"));
-    return links
-      .filter((a) => a.textContent && a.href.includes("/positions/"))
-      .map((a) => ({
-        title: a.textContent!.trim(),
-        url: a.href,
-      }));
-  });
+  const jobs = await page.evaluate(
+    ({ companyName, jobSelectorType, jobLinkSelector }) => {
+      const elements = Array.from(document.querySelectorAll(jobSelectorType));
+
+      return elements
+        .map((el: HTMLAnchorElement | HTMLDivElement) => ({
+          title: el.textContent?.trim() || "",
+          url: el instanceof HTMLAnchorElement ? el.href : el.textContent?.trim() || "",
+          company: companyName
+        }))
+        .filter(j => j.title.length > 3 && j.url.includes(jobLinkSelector));
+    },
+    {
+      companyName: company.name,
+      jobSelectorType: company.jobSelectorType,
+      jobLinkSelector: company.jobLinkSelector
+    }
+  );
 
   await browser.close();
   return jobs;

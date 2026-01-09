@@ -1,19 +1,33 @@
+import { loadConfig } from "./config";
 import { scrapeJobs } from "./scrape";
 import { isNewJob } from "./db";
 import { notifyNewJobs } from "./notify";
-
-const CAREERS_URL = "https://google.com";
+import { Job } from "./types";
 
 async function run() {
-  const jobs = await scrapeJobs(CAREERS_URL);
+  const companies = loadConfig();
+  const newJobs: Job[] = [];
 
-  const newJobs = jobs.filter((job) => isNewJob(job));
+  for (const company of companies) {
+    console.log(`🔍 Checking ${company.name}`);
+
+    const jobs = await scrapeJobs(company);
+
+    for (const job of jobs) {
+      if (isNewJob(job)) {
+        newJobs.push(job);
+      }
+    }
+  }
 
   if (newJobs.length > 0) {
     notifyNewJobs(newJobs);
   } else {
-    console.log("No new jobs today.");
+    console.log("No new jobs found today.");
   }
 }
 
-run().catch(console.error);
+run().catch(err => {
+  console.error("❌ Error:", err);
+  process.exit(1);
+});

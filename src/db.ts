@@ -7,6 +7,7 @@ db.prepare(
   `
   CREATE TABLE IF NOT EXISTS jobs (
     id TEXT PRIMARY KEY,
+    company TEXT,
     title TEXT,
     url TEXT,
     first_seen TEXT
@@ -19,8 +20,9 @@ export function isNewJob(job: Job): boolean {
 
   if (row) return false;
 
-  db.prepare("INSERT INTO jobs VALUES (?, ?, ?, datetime('now'))").run(
+  db.prepare("INSERT INTO jobs VALUES (?, ?, ?, ?, datetime('now'))").run(
     job.url,
+    job.company,
     job.title,
     job.url
   );
