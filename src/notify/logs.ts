@@ -1,4 +1,4 @@
-import { Job } from "./types";
+import { Job } from "../types";
 
 export function notifyNewJobs(jobs: Job[]) {
   console.log("🚨 New jobs found:");

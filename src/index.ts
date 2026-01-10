@@ -4,7 +4,7 @@ import { scrapeJobs } from "./scrape";
 import { isNewJob } from "./db";
 import { sendJobEmail } from "./notify/email";
 import { Job } from "./types";
-import { notifyNewJobs } from "./notify";
+import { notifyNewJobs } from "./notify/logs";
 
 async function run() {
   const companies = loadConfig();
