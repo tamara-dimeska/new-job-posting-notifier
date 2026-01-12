@@ -2,7 +2,7 @@ import "dotenv/config";
 import { loadConfig } from "./config";
 import { scrapeJobs } from "./scrape";
 import { isNewJob } from "./db";
-import { sendJobEmail } from "./notify/email";
+import { sendJobEmail, sendNoJobsEmail } from "./notify/email";
 import { Job } from "./types";
 
 async function run() {
@@ -35,7 +35,8 @@ async function run() {
     console.log(`📧 Sending email for ${newJobs.length} new job(s)`);
     await sendJobEmail(newJobs);
   } else {
-    console.log("No new jobs found today.");
+    console.log("No new job postings found today.");
+    await sendNoJobsEmail();
   }
 }
 

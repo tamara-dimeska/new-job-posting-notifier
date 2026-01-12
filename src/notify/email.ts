@@ -28,3 +28,17 @@ export async function sendJobEmail(jobs: Job[]) {
     text: body,
   });
 }
+
+export async function sendNoJobsEmail() {
+  const subject = "No new job postings found today";
+
+  const body =
+    "The job watcher ran successfully, but no new job postings were found.";
+
+  await transporter.sendMail({
+    from: `"Job Watcher" <${process.env.EMAIL_USER}>`,
+    to: process.env.EMAIL_TO,
+    subject,
+    text: body,
+  });
+}

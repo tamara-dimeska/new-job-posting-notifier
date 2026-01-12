@@ -2,7 +2,7 @@ name: Job Watcher
 
 on:
   schedule:
-    - cron: "*/5 * * * *"
+    - cron: "0 16 * * *" # 16:00 UTC ≈ 18:00 Berlin (CEST)
   workflow_dispatch:
 
 jobs:
