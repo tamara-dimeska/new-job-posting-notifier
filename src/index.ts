@@ -4,14 +4,14 @@ import { scrapeJobs } from "./scrape";
 import { isNewJob } from "./db";
 import { sendJobEmail } from "./notify/email";
 import { Job } from "./types";
-import { notifyNewJobs } from "./notify/logs";
 
 async function run() {
   const companies = loadConfig();
   const newJobs: Job[] = [];
 
   for (const company of companies) {
-    console.log(`🔍 Checking ${company.name}`);
+    console.log(`🔍 Checking...`);
+    // console.log(`🔍 Checking ${company.name}`);
 
     try {
       const jobs = await scrapeJobs(company);
@@ -23,7 +23,8 @@ async function run() {
       }
     } catch (error) {
       console.error(
-        `⚠️  Failed to scrape ${company.name}:`,
+        // `⚠️  Failed to scrape ${company.name}:`,
+        "⚠️ Failed to scrape:",
         error instanceof Error ? error.message : error
       );
       // Continue with next company
@@ -31,8 +32,6 @@ async function run() {
   }
 
   if (newJobs.length > 0) {
-    notifyNewJobs(newJobs);
-
     console.log(`📧 Sending email for ${newJobs.length} new job(s)`);
     await sendJobEmail(newJobs);
   } else {

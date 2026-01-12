@@ -5,7 +5,7 @@ export async function scrapeJobs(company: CompanyConfig): Promise<Job[]> {
   const browser = await chromium.launch({ headless: true });
   const page = await browser.newPage();
 
-  await page.goto(company.careersUrl, { waitUntil: "networkidle" });
+  await page.goto(company.careersUrl, { waitUntil: "networkidle", timeout: 60000 });
 
   const jobs = await page.evaluate(
     ({ companyName, jobSelectorType, jobLinkSelector }) => {
