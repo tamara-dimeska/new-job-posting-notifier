@@ -1,0 +1,52 @@
+name: Job Watcher
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Restore job database cache
+        uses: actions/cache@v4
+        with:
+          path: jobs.db
+          key: job-watcher-db
+          restore-keys: |
+            job-watcher-db
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Recreate private config
+        run: |
+          echo '${{ secrets.PRIVATE_CONFIG_JSON }}' > private-config.json
+
+      - name: Run job watcher
+        env:
+          EMAIL_HOST: ${{ secrets.EMAIL_HOST }}
+          EMAIL_PORT: ${{ secrets.EMAIL_PORT }}
+          EMAIL_USER: ${{ secrets.EMAIL_USER }}
+          EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
+          EMAIL_TO: ${{ secrets.EMAIL_TO }}
+        run: npx ts-node src/index.ts
+
+      - name: Save updated job database to cache
+        uses: actions/cache@v4
+        with:
+          path: jobs.db
+          key: job-watcher-db
