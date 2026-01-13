@@ -24,8 +24,8 @@ async function run() {
     } catch (error) {
       console.error(
         // `⚠️  Failed to scrape ${company.name}:`,
-        "⚠️ Failed to scrape:",
-        error instanceof Error ? error.message : error
+        "⚠️ Failed to scrape, continuing with next company",
+        // error instanceof Error ? error.message : error
       );
       // Continue with next company
     }
