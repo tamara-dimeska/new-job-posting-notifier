@@ -3,35 +3,40 @@ import { CompanyConfig, Job } from "./types";
 
 export async function scrapeJobs(company: CompanyConfig): Promise<Job[]> {
   const browser = await chromium.launch({ headless: true });
-  const page = await browser.newPage();
+  
+  try {
+    const page = await browser.newPage();
 
-  await page.goto(company.careersUrl, {
-    waitUntil: "networkidle",
-    timeout: 60000,
-  });
+    await page.goto(company.careersUrl, {
+      waitUntil: "networkidle",
+      timeout: 60000,
+    });
 
-  const jobs = await page.evaluate(
-    ({ companyName, jobSelectorType, jobLinkSelector }) => {
-      const elements = Array.from(document.querySelectorAll(jobSelectorType));
+    const jobs = await page.evaluate(
+      ({ companyName, jobSelectorType, jobLinkSelector }) => {
+        const elements = Array.from(document.querySelectorAll(jobSelectorType));
 
-      return elements
-        .map((el: HTMLAnchorElement | HTMLDivElement) => ({
-          title: el.textContent?.trim() || "",
-          url:
-            el instanceof HTMLAnchorElement
-              ? el.href
-              : el.textContent?.trim() || "",
-          company: companyName,
-        }))
-        .filter((j) => j.title.length > 3 && j.url.includes(jobLinkSelector));
-    },
-    {
-      companyName: company.name,
-      jobSelectorType: company.jobSelectorType,
-      jobLinkSelector: company.jobLinkSelector,
-    }
-  );
+        return elements
+          .map((el: HTMLAnchorElement | HTMLDivElement) => ({
+            title: el.textContent?.trim() || "",
+            url:
+              el instanceof HTMLAnchorElement
+                ? el.href
+                : el.textContent?.trim() || "",
+            company: companyName,
+          }))
+          .filter((j) => j.title.length > 3 && j.url.includes(jobLinkSelector));
+      },
+      {
+        companyName: company.name,
+        jobSelectorType: company.jobSelectorType,
+        jobLinkSelector: company.jobLinkSelector,
+      }
+    );
 
-  await browser.close();
-  return jobs;
+    return jobs;
+  } finally {
+    // Always close the browser, even if an error occurs
+    await browser.close();
+  }
 }
