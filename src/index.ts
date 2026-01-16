@@ -1,7 +1,7 @@
 import "dotenv/config";
 import { loadConfig } from "./config";
 import { scrapeJobs } from "./scrape";
-import { isNewJob } from "./db";
+import { isNewJob, closeDatabase } from "./db";
 import { sendJobEmail, sendNoJobsEmail } from "./notify/email";
 import { Job } from "./types";
 
@@ -24,7 +24,7 @@ async function run() {
     } catch (error) {
       console.error(
         // `⚠️  Failed to scrape ${company.name}:`,
-        "⚠️ Failed to scrape, continuing with next company",
+        "⚠️ Failed to scrape, continuing with next company"
         // error instanceof Error ? error.message : error
       );
       // Continue with next company
@@ -38,9 +38,12 @@ async function run() {
     console.log("No new job postings found today.");
     await sendNoJobsEmail();
   }
+
+  closeDatabase();
 }
 
 run().catch((err) => {
   console.error("❌ Error:", err);
+  closeDatabase();
   process.exit(1);
 });

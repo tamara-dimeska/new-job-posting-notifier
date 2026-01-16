@@ -29,3 +29,7 @@ export function isNewJob(job: Job): boolean {
 
   return true;
 }
+
+export function closeDatabase(): void {
+  db.close();
+}

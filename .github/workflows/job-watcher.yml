@@ -15,11 +15,12 @@ jobs:
 
       - name: Restore job database cache
         uses: actions/cache@v4
+        id: cache-db
         with:
           path: jobs.db
           key: job-watcher-db
           restore-keys: |
-            job-watcher-db
+            job-watcher-db-
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -46,7 +47,10 @@ jobs:
         run: npx ts-node src/index.ts
 
       - name: Save updated job database to cache
+        if: always()
         uses: actions/cache@v4
         with:
           path: jobs.db
-          key: job-watcher-db
+          key: job-watcher-db-${{ hashFiles('jobs.db') }}
+          restore-keys: |
+            job-watcher-db-

@@ -3,7 +3,7 @@ import { CompanyConfig, Job } from "./types";
 
 export async function scrapeJobs(company: CompanyConfig): Promise<Job[]> {
   const browser = await chromium.launch({ headless: true });
-  
+
   try {
     const page = await browser.newPage();
 
