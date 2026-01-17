@@ -9,4 +9,5 @@ export interface CompanyConfig {
   careersUrl: string;
   jobSelectorType: "a" | "div";
   jobLinkSelector: string;
+  waitNetwork?: boolean;
 }

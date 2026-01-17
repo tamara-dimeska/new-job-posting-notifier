@@ -8,12 +8,13 @@ export async function scrapeJobs(company: CompanyConfig): Promise<Job[]> {
     const page = await browser.newPage();
 
     await page.goto(company.careersUrl, {
-      waitUntil: "networkidle",
+      waitUntil: company.waitNetwork ? "networkidle" : "domcontentloaded",
       timeout: 60000,
     });
 
     const jobs = await page.evaluate(
       ({ companyName, jobSelectorType, jobLinkSelector }) => {
+        const skipList = ["learn more", "apply"];
         const elements = Array.from(document.querySelectorAll(jobSelectorType));
 
         return elements
@@ -25,7 +26,12 @@ export async function scrapeJobs(company: CompanyConfig): Promise<Job[]> {
                 : el.textContent?.trim() || "",
             company: companyName,
           }))
-          .filter((j) => j.title.length > 3 && j.url.includes(jobLinkSelector));
+          .filter(
+            (j) =>
+              j.title.length > 3 &&
+              j.url.includes(jobLinkSelector) &&
+              !skipList.includes(j.title.toLowerCase())
+          );
       },
       {
         companyName: company.name,
