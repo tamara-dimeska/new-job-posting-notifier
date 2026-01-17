@@ -18,6 +18,9 @@ jobs:
         with:
           path: jobs.db
           key: job-watcher-db
+          restore-keys: |
+            job-watcher-db
+
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -42,3 +45,10 @@ jobs:
           EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
           EMAIL_TO: ${{ secrets.EMAIL_TO }}
         run: npx ts-node src/index.ts
+
+      - name: Save job database cache
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: jobs.db
+          key: job-watcher-db
