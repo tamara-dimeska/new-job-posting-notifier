@@ -21,6 +21,8 @@ jobs:
           restore-keys: |
             job-watcher-db
 
+      - name: Debug DB size
+        run: ls -lh jobs.db || echo "DB missing"
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
