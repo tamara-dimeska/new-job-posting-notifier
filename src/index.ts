@@ -15,6 +15,7 @@ async function run() {
 
     try {
       const jobs = await scrapeJobs(company);
+      // console.log(`Jobs found: ${jobs.length}`);
 
       for (const job of jobs) {
         if (isNewJob(job)) {

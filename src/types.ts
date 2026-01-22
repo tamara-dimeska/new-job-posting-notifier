@@ -7,7 +7,7 @@ export interface Job {
 export interface CompanyConfig {
   name: string;
   careersUrl: string;
-  jobSelectorType: "a" | "div";
+  jobSelectorType: string;
   jobLinkSelector: string;
   waitNetwork?: boolean;
 }
