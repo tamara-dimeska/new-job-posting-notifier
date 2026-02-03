@@ -17,9 +17,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: jobs.db
-          key: job-watcher-db
+          key: job-watcher-db-${{ github.run_id }}
           restore-keys: |
-            job-watcher-db
+            job-watcher-db-
 
       - name: Debug DB size
         run: ls -lh jobs.db || echo "DB missing"
@@ -53,4 +53,4 @@ jobs:
         uses: actions/cache/save@v4
         with:
           path: jobs.db
-          key: job-watcher-db
+          key: job-watcher-db-${{ github.run_id }}
